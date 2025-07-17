@@ -1,0 +1,29 @@
+{
+  "name": "clownz-army",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "Clownz Army",
+  "main": "index.js",
+  "scripts": {
+    "start": "bun server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@remotion/cli": "4.0.314",
+    "@remotion/google-fonts": "^4.0.320",
+    "@remotion/media-utils": "^4.0.320",
+    "@remotion/motion-blur": "^4.0.320",
+    "@remotion/zod-types": "4.0.320",
+    "@types/bun": "^1.2.18",
+    "express": "^4.21.2",
+    "kokoro-js": "^1.2.1",
+    "react": "^19.1.0",
+    "remotion": "4.0.314",
+    "zod": "3.22.3"
+  },
+  "devDependencies": {
+    "@remotion/renderer": "^4.0.314"
+  }
+}
