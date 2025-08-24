@@ -18,6 +18,6 @@ const tts = await KokoroTTS.from_pretrained(model_id, {
 
 const audio = await tts.generate(text, {
   //   // Use `tts.list_voices()` to list all available voices
-  voice: "af_heart",
+  voice: "am_adam",
 });
 audio.save(name)
