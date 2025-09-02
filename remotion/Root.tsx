@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
-import { Composition, staticFile } from 'remotion';
-import { parseMedia } from '@remotion/media-parser';
-import { MyComposition } from './Composition';
-import { schema } from './types';
+import React, { useState } from 'react'
+import { Composition, staticFile } from 'remotion'
+import { parseMedia } from '@remotion/media-parser'
+import { MyComposition } from './Story'
 
 export const RemotionRoot: React.FC = () => {
   return (<Composition
@@ -10,23 +9,20 @@ export const RemotionRoot: React.FC = () => {
     component={MyComposition}
     durationInFrames={10}
     fps={30}
-    width={720}
-    height={1280}
-    schema={schema}
+    width={1080}
+    height={1920}
     defaultProps={{
-      image: 'path',
-      username: 'vlad.chat',
-      content: 'If hard work leads to success, the donkey would own the farm.',
-      sound: 'speech-0.mp3'
+      content: 'Dialog line 1',
+      sound: 'speech.mp3'
     }}
     calculateMetadata={async ({ props }) => {
       const { slowDurationInSeconds } = await parseMedia({
-        src: staticFile(props.sound),
+        src: staticFile(props.sound as string),
         fields: { slowDurationInSeconds: true }
       })
 
       return {
-        durationInFrames: Math.floor(slowDurationInSeconds * 30) + 10
+        durationInFrames: Math.floor(slowDurationInSeconds * 30)
       }
     }}
   />);
