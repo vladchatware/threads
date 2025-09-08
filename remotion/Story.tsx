@@ -25,18 +25,32 @@ const styles = {
   },
   main: {
     position: 'absolute',
-    bottom: 100,
-    left: 0,
+    bottom: 800,
+    left: 150,
     marginInline: 30,
     zIndex: 2,
+  },
+  img: {
+    flex: 1,
+    position: 'absolute',
+    zIndex: 1,
+    top: -300,
+    height: '150%',
+    // width: '200%'
+  },
+  left: {
+    left: -200,
+  },
+  right: {
+    right: -150
   }
 }
 
 
-export const MyComposition = ({ content, sound }) => {
+export const Story =({ content, sound, side }) => {
   return (<CameraMotionBlur shutterAngle={280} samples={1}>
     <AbsoluteFill style={styles.container}>
-      <Img src={staticFile('IMG_4959.JPG')} fit="cover" style={{flex: 1, position: 'absolute', zIndex: 1, top: 0, left: -150, height: '100%'}} />
+      <Img src={staticFile('shadow.png')} fit="cover" style={{...styles.img, ...styles[side]}} />
       <main style={styles.main}>
         <p style={styles.p}>{content}</p>
       </main>

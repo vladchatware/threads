@@ -1,12 +1,21 @@
 import { $ } from 'bun'
+import _path from 'path'
 
-const files = await $`ls sequence-*.mp4 | sort -V`.text()
-const lines = files.split('\n').map(f => f ? `file '${f}'\n` : '\n')
+const path = _path.join(__dirname, '..', 'out')
 
-await $`rm videos.txt`.nothrow()
-await Bun.write('videos.txt', lines.join(''))
-await $`rm output.mp4`.nothrow()
-await $`ffmpeg -y -f concat -i videos.txt -c copy output.mp4`.quiet()
+export const concat = async (name) => {
+  const files = await $`ls ${path}/*.mp4 | sort -V`.text()
+  const lines = files.split('\n').map(f => f ? `file '${f}'\n` : '')
 
-await $`rm videos.txt`.nothrow()
-await $`rm sequence-*.mp4`.nothrow()
+  await Bun.write(`${path}/videos.txt`, lines.join(''))
+
+  await $`ffmpeg -y -f concat -safe 0 -i ${path}/videos.txt -c copy ${path}/${name}.mp4`.quiet()
+
+  await $`mv ${path}/${name}.mp4 ${path}/../finished`.nothrow()
+  await cleanup()
+}
+
+export const cleanup = async () => {
+  await $`rm ${path}/videos.txt`.nothrow()
+  await $`rm ${path}/*.mp4`.nothrow()
+}

@@ -2,11 +2,20 @@ import OpenAI from 'openai'
 import { readdirSync } from 'node:fs'
 const openai = new OpenAI()
 
-export const readStory = async (): Promise<{text: string[]}> => {
-  const stories = readdirSync(`${__dirname}/../stories`)
-  const lastStory = stories.length - 1
+export const readStory = async (name: string | undefined): Promise<{ text: string[] }> => {
+  let story: Bun.BunFile = null
+  if (name) {
+    story = Bun.file(`${__dirname}/../stories/${name}.json`, { type: 'application/json' })
+  } else {
+    const stories = readdirSync(`${__dirname}/../stories`)
+    const lastStory = stories.length - 1
 
-  const story = Bun.file(`${__dirname}/../stories/${stories[lastStory]}`, {type: 'application/json'})
+    story = Bun.file(`${__dirname}/../stories/${stories[lastStory]}`, { type: 'application/json' })
+  }
+
+  if (!story) {
+    throw new Error('Story not found.')
+  }
 
   return story.json()
 }
@@ -22,17 +31,26 @@ export const generateStory = async (system: string, prompt: string) => {
         schema: {
           type: 'object',
           properties: {
-            text: {
+            topic: { type: 'string', description: 'Conversation topic' },
+            dialog: {
               type: 'array',
               items: {
-                type: 'string'
+                type: 'object',
+                properties: {
+                  text: { type: 'string', description: 'Dialog script.' },
+                  instructions: { type: 'string', description: 'control aspects of speech, including: Accent, Emotional range, Intonation, Impressions, Speed of speech, Tone, Whispering.' },
+                  side: { type: 'string', enum: ['left', 'right'], description: 'The side of the conversation: Teacher -> Student is left, Teacher <- Student is right.' },
+                  voice: { type: 'string', enum: ['ash', 'onyx'], description: 'Ash is the teacher, Onyx is the student.' }
+                },
+                additionalProperties: false,
+                required: ['text', 'instructions', 'side', 'voice']
               },
-              required: [],
-              additionalProperties: false
+              additionalProperties: false,
+              required: []
             }
           },
           additionalProperties: false,
-          required: ['text']
+          required: ['topic', 'dialog']
         }
       }
     }
@@ -42,18 +60,18 @@ export const generateStory = async (system: string, prompt: string) => {
 
   const counter = readdirSync(`${__dirname}/../stories`).length
 
-  Bun.write(`${__dirname}/../stories/story-${counter}.json`, JSON.stringify(story, null, 2))
+  Bun.write(`${__dirname}/../stories/${counter}-${story.topic}.json`, JSON.stringify(story, null, 2))
 
   return response.output_parsed
 }
 
-export const generateSound = async (text: string, name = 'speech.mp3') => {
+export const generateSound = async (input: string, instructions: string, voice: 'ash' | 'onyx', name = 'speech.mp3') => {
   const audio = await openai.audio.speech.create({
     model: 'gpt-4o-mini-tts',
     // response_format: 'wav',
-    voice: 'ash',
-    input: text,
-    // instructions: 'speak slowly'
+    voice,
+    input,
+    instructions
   })
 
   await Bun.write(`${__dirname}/../public/${name}`, Buffer.from(await audio.arrayBuffer()))
