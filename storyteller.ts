@@ -1,37 +1,50 @@
 import { bundle } from '@remotion/bundler'
 import { renderMedia, selectComposition } from '@remotion/renderer'
-import { readStory, generateSound } from './src/ai'
+import { generateSound, generateStory } from './src/ai'
+import prompt from './prompt/prompt.md' with {type: 'text'}
+import system from './prompt/system.md' with {type: 'text'}
 
-const story = (await readStory()).text.map(text => ({text}))
-
-const generateSection = async (section, index) => {
-  console.log(section.text)
+const generateVideo = async (story) => {
   // const image = await generateSlide(section.image, `image-${index}.png`)
-  const sound = await generateSound(section.text, `speech-${index}.mp3`)
-  // const sound = 'speech.mp3'
+  for (const [index, section] of story.dialog.entries()) {
+    console.log(`${section.voice}: ${section.text}`)
+    await generateSound(
+      section.text,
+      section.instructions,
+      section.voice,
+      `speech-${index}.mp3`
+    )
+  }
+
   const serveUrl = await bundle({
     entryPoint: './remotion/index.ts'
   })
+
   const composition = await selectComposition({
     serveUrl,
-    id: 'Main',
+    id: 'Story',
     inputProps: {
-      sound,
-      content: section.text
+      story
     }
   })
 
   await renderMedia({
     composition,
     serveUrl,
-    outputLocation: `out/${index}.mp4`,
+    outputLocation: `out/${story.topic}.mp4`,
     codec: 'h264'
   })
 }
 
-// await generateSection({text: story.text[0]}, 0)
+// const story = await readStory('23-Use self-sabotage to break bad habits and perfectionism')
 
-for (const [index, section] of story.entries()) {
-  await generateSection(section, index)
+const stories = [
+  prompt
+]
+
+for (const prompt of stories) {
+  const story = await generateStory(system, prompt)
+  await generateVideo(story)
 }
+
 

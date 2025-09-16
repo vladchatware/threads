@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Audio, AbsoluteFill, Img, staticFile, Sequence } from "remotion";
 import { loadFont } from '@remotion/google-fonts/Roboto';
 const { fontFamily } = loadFont(); // "Titan One"
@@ -50,6 +50,15 @@ const styles = {
     fontWeight: '500',
     letterSpacing: 0.8,
   },
+  handle: {
+    margin: 0,
+    padding: 0,
+    fontSize: 40,
+    lineHeight: 1.1,
+    fontWeight: '400',
+    fontFamily: 'system-ui',
+    letterSpacing: 0.3,
+  },
   trailing: {
 
   },
@@ -74,13 +83,10 @@ const theme = {
   }
 }
 
-export const Tweet = ({ image, username, content, sound }: { image: string, username: string, content: string, sound: string }) => {
-  const _theme = theme['light']
+export const Tweet = ({ image, username, content, sound, handle, mode }: { image: string, username: string, content: string, sound: string, mode: 'dark' | 'light'}) => {
+  const _theme = theme[mode]
   return (<CameraMotionBlur shutterAngle={280} samples={1}>
     <AbsoluteFill>
-      <AbsoluteFill>
-        <Img src={staticFile('tweet-dark.JPG')} style={{}} />
-      </AbsoluteFill>
       <AbsoluteFill style={{ ...styles.container, backgroundColor: _theme.fill }}>
         <div style={{ ...styles.content, backgroundColor: _theme.background }}>
           <div style={styles.innerContaner}>
@@ -88,7 +94,7 @@ export const Tweet = ({ image, username, content, sound }: { image: string, user
               <Img src={staticFile(image)} width={105} height={105} style={styles.pic} />
               <div>
                 <p style={{ ...styles.headerTitle, color: _theme.color }}>{username}</p>
-                <p style={{ ...styles.headerTitle, color: _theme.color }}>@vladchatware</p>
+                <p style={{ ...styles.handle, color: 'rgb(85, 99, 111)' }}>{handle}</p>
               </div>
             </header>
             <main style={styles.main}>
@@ -99,7 +105,7 @@ export const Tweet = ({ image, username, content, sound }: { image: string, user
         </div>
       </AbsoluteFill>
       {/* <AbsoluteFill> */}
-      {/*   <Img src={staticFile('tweet-light.JPG')} style={{}} /> */}
+      {/*   <Img src={staticFile('tweet-dark.JPG')} style={{opacity: '0.8'}} /> */}
       {/* </AbsoluteFill> */}
     </AbsoluteFill>
     <Sequence from={10}>

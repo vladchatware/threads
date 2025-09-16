@@ -22,7 +22,7 @@ export const readStory = async (name: string | undefined): Promise<{ text: strin
 
 export const generateStory = async (system: string, prompt: string) => {
   const response = await openai.responses.parse({
-    model: 'gpt-5-nano',
+    model: 'gpt-5-mini',
     input: [{ role: 'system', content: system }, { role: 'user', content: prompt }],
     text: {
       format: {
@@ -39,7 +39,7 @@ export const generateStory = async (system: string, prompt: string) => {
                 properties: {
                   text: { type: 'string', description: 'Dialog script.' },
                   instructions: { type: 'string', description: 'control aspects of speech, including: Accent, Emotional range, Intonation, Impressions, Speed of speech, Tone, Whispering.' },
-                  side: { type: 'string', enum: ['left', 'right'], description: 'The side of the conversation: Teacher -> Student is left, Teacher <- Student is right.' },
+                  side: { type: 'string', enum: ['left', 'right'], description: 'The side of the conversation: Student -> Teacher is left, Student <- Teacher is right.' },
                   voice: { type: 'string', enum: ['ash', 'onyx'], description: 'Ash is the teacher, Onyx is the student.' }
                 },
                 additionalProperties: false,
@@ -65,10 +65,9 @@ export const generateStory = async (system: string, prompt: string) => {
   return response.output_parsed
 }
 
-export const generateSound = async (input: string, instructions: string, voice: 'ash' | 'onyx', name = 'speech.mp3') => {
+export const generateSound = async (input: string, instructions = '', voice: 'ash' | 'onyx', name = 'speech.mp3') => {
   const audio = await openai.audio.speech.create({
     model: 'gpt-4o-mini-tts',
-    // response_format: 'wav',
     voice,
     input,
     instructions

@@ -74,13 +74,13 @@ const theme = {
   }
 }
 
-export const Thread = ({ image, username, content, sound }: { image: string, username: string, content: string, sound: string }) => {
-  const _theme = theme['dark']
+export const Thread = ({ image, username, content, sound, mode }: { image: string, username: string, content: string, sound: string, mode: 'dark' | 'light' }) => {
+  const _theme = theme[mode]
   return (<CameraMotionBlur shutterAngle={280} samples={1}>
     <AbsoluteFill>
-      <AbsoluteFill>
-        <Img src={staticFile('threads-dark.JPG')} style={{}} />
-      </AbsoluteFill>
+      {/* <AbsoluteFill> */}
+      {/*   <Img src={staticFile('threads-dark.JPG')} style={{}} /> */}
+      {/* </AbsoluteFill> */}
       <AbsoluteFill style={{ ...styles.container, backgroundColor: _theme.fill }}>
         <div style={{ ...styles.content, backgroundColor: _theme.background }}>
           <div style={styles.innerContaner}>

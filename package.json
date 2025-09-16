@@ -15,6 +15,7 @@
     "@remotion/google-fonts": "4.0.340",
     "@remotion/media-utils": "4.0.340",
     "@remotion/motion-blur": "4.0.340",
+    "@remotion/transitions": "4.0.340",
     "@remotion/zod-types": "4.0.340",
     "@types/bun": "^1.2.21",
     "ai": "^5.0.28",
@@ -22,9 +23,10 @@
     "openai": "^5.16.0",
     "react": "^19.1.1",
     "remotion": "4.0.340",
-    "zod": "^4.1.5"
+    "zod": "^3.0.0"
   },
   "devDependencies": {
-    "@remotion/renderer": "^4.0.340"
+    "@remotion/renderer": "^4.0.340",
+    "prettier": "^3.6.2"
   }
 }
