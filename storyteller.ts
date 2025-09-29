@@ -1,6 +1,6 @@
 import { bundle } from '@remotion/bundler'
 import { renderMedia, selectComposition } from '@remotion/renderer'
-import { generateSound, generateStory } from './src/ai'
+import { generateSound, readStory, generateStory, generateText } from './src/ai'
 import prompt from './prompt/prompt.md' with {type: 'text'}
 import system from './prompt/system.md' with {type: 'text'}
 
@@ -14,6 +14,7 @@ const generateVideo = async (story) => {
       section.voice,
       `speech-${index}.mp3`
     )
+    await generateText(`speech-${index}.mp3`, `captions-${index}.json`)
   }
 
   const serveUrl = await bundle({
@@ -24,7 +25,7 @@ const generateVideo = async (story) => {
     serveUrl,
     id: 'Story',
     inputProps: {
-      story
+      story,
     }
   })
 
@@ -36,10 +37,21 @@ const generateVideo = async (story) => {
   })
 }
 
-// const story = await readStory('23-Use self-sabotage to break bad habits and perfectionism')
+// const story = await readStory('89-Letting Go of Blame')
+// await generateVideo(story)
 
 const stories = [
-  prompt
+  //prompt
+  "The cringe of truth",
+  "Facing the shadow",
+  "The prison of doubt",
+  "Letting go of blame",
+  "The Courage to See",
+  "Surrendering Control",
+  "The Gift of Self-Honesty",
+  "Releasing the Past",
+  "Embracing Divine Love",
+  "The Power of Compassion"
 ]
 
 for (const prompt of stories) {

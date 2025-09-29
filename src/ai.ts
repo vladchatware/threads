@@ -1,5 +1,5 @@
 import OpenAI from 'openai'
-import { readdirSync } from 'node:fs'
+import { readdirSync, createReadStream } from 'node:fs'
 const openai = new OpenAI()
 
 export const readStory = async (name: string | undefined): Promise<{ text: string[] }> => {
@@ -74,6 +74,19 @@ export const generateSound = async (input: string, instructions = '', voice: 'as
   })
 
   await Bun.write(`${__dirname}/../public/${name}`, Buffer.from(await audio.arrayBuffer()))
+
+  return name
+}
+
+export const generateText = async (input: string, name: string) => {
+  const transcription = await openai.audio.transcriptions.create({
+    file: createReadStream(`${__dirname}/../public/${input}`),
+    model: 'whisper-1',
+    response_format: 'verbose_json',
+    timestamp_granularities: ['word']
+  })
+
+  await Bun.write(`${__dirname}/../public/${name}`, JSON.stringify(transcription, null, 2))
 
   return name
 }

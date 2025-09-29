@@ -1,11 +1,13 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Composition, staticFile } from 'remotion'
 import { parseMedia } from '@remotion/media-parser'
 import { Story } from './Story'
 import { Thread } from './Thread'
 import { Tweet } from './Tweet'
 import { storySchema, threadSchema, tweetSchema } from './types'
-import { generateSound } from '../src/ai'
+import { openAiWhisperApiToCaptions } from '@remotion/openai-whisper'
+import { Main } from './Main'
+import { Outro } from './Outro'
 
 const calculateMetadata = async ({ props }) => {
   const { slowDurationInSeconds } = await parseMedia({
@@ -23,11 +25,10 @@ export const RemotionRoot: React.FC = () =>
     <Composition
       id="Story"
       component={Story}
-      durationInFrames={10}
       fps={30}
       width={1080}
       height={1920}
-      // schema={storySchema}
+      schema={storySchema}
       defaultProps={{
         story: {
           topic: "A Moment of Patience - healing the shadow through inner work",
@@ -101,7 +102,18 @@ export const RemotionRoot: React.FC = () =>
             src: staticFile(`speech-${i}.mp3`),
             fields: { slowDurationInSeconds: true }
           })
-          return { ...line, durationInFrames: Math.floor(slowDurationInSeconds * 30), sound: `speech-${i}.mp3` }
+
+          const captionsPath = staticFile(`captions-${i}.json`)
+          const captionsRes = await fetch(captionsPath)
+          const transcription = await captionsRes.json()
+          const { captions } = openAiWhisperApiToCaptions({ transcription })
+
+          return {
+            ...line,
+            durationInFrames: Math.floor(slowDurationInSeconds * 30),
+            sound: `speech-${i}.mp3`,
+            captions
+          }
         }))
 
         const totalDuration = sounds.reduce((acc, sound) => acc + sound.durationInFrames, 0)
@@ -115,6 +127,27 @@ export const RemotionRoot: React.FC = () =>
             }
           },
           durationInFrames: totalDuration
+        }
+      }}
+    />
+    <Composition
+      id="Outro"
+      component={Outro}
+      durationInFrames={10}
+      fps={30}
+      width={1080}
+      height={1920}
+      defaultProps={{
+        video: 'The Power of Compassion.mp4'
+      }}
+      calculateMetadata={async ({ props }) => {
+        const { slowDurationInSeconds } = await parseMedia({
+          src: staticFile(props.video),
+          fields: { slowDurationInSeconds: true }
+        })
+        return {
+          props,
+          durationInFrames: Math.floor(slowDurationInSeconds * 30)
         }
       }}
     />

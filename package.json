@@ -15,6 +15,7 @@
     "@remotion/google-fonts": "4.0.340",
     "@remotion/media-utils": "4.0.340",
     "@remotion/motion-blur": "4.0.340",
+    "@remotion/openai-whisper": "^4.0.353",
     "@remotion/transitions": "4.0.340",
     "@remotion/zod-types": "4.0.340",
     "@types/bun": "^1.2.21",
