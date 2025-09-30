@@ -3,6 +3,8 @@ import { loadFont } from '@remotion/google-fonts/NotoSans';
 const { fontFamily } = loadFont();
 import { CameraMotionBlur } from '@remotion/motion-blur';
 import { createTikTokStyleCaptions, Caption } from '@remotion/captions';
+import { storySchema } from "./types";
+import { z } from "zod";
 
 const styles = {
   container: {
@@ -86,7 +88,19 @@ const Captions = ({ captions, combineTokensWithinMilliseconds }) => {
   </Series>
 }
 
-export const Story = ({ story }) => {
+type StoryMetadata = {
+  dialog: {
+    text: string
+    instructions: string
+    side: 'left' | 'right',
+    voice: 'onyx' | 'ash',
+    durationInFrames: number,
+    sound: string,
+    captions: Caption[]
+  }[]
+}
+
+export const Story = ({ story }: { story: StoryMetadata }) => {
   return (<CameraMotionBlur shutterAngle={280} samples={1}>
     <AbsoluteFill style={styles.container}>
       <Series>
